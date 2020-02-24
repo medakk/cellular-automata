@@ -4,11 +4,12 @@ import pycuda.driver as cuda
 import pycuda.autoinit
 import pycuda.gpuarray as gpuarray
 from pycuda.compiler import SourceModule
+from PIL import Image
 
-N = 350
+N = 500
 
 pygame.init()
-display = pygame.display.set_mode((N, N))
+display = pygame.display.set_mode((600, 600))
 
 cell_state = np.zeros((N, N), dtype=np.int32)
 cell_state[0, N//2] = 1
@@ -44,7 +45,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    surf = pygame.surfarray.make_surface(update() * 255)
+    Z = np.array(Image.fromarray(update()*255).resize((600, 600), Image.NEAREST))
+    surf = pygame.surfarray.make_surface(Z)
     display.blit(surf, (0, 0))
     pygame.display.update()
 
