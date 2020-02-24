@@ -1,6 +1,7 @@
 import taichi as ti
 
-ti.init(arch=ti.cuda) # Run on GPU by default
+ti.init(arch=ti.cuda, print_ir=True) # Run on GPU by default
+# ti.set_logging_level(ti.TRACE)
 
 n = 200
 cells = ti.var(dt=ti.i32, shape=(n, n))
@@ -22,6 +23,34 @@ def init_cells():
 
     cells[0, n//2] = 1
 
+@ti.func
+def rule_30(a: ti.i32, b: ti.i32, c: ti.i32) -> ti.i32:
+    p = 0
+    if a == 1:
+        if b == 0 and c == 0:
+            p = 1
+        else:
+            p = 0
+    else:
+        if b == 0 and c == 0:
+            p = 0
+        else:
+            p = 1
+    return p
+
+@ti.func
+def rule_110(a: ti.i32, b: ti.i32, c: ti.i32) -> ti.i32:
+    p = 0
+    if a == 1 and b == 1 and c == 1:
+        p = 0
+    elif a == 1 and b == 0 and c == 0:
+        p = 0
+    elif a == 0 and b == 0 and c == 0:
+        p = 0
+    else:
+        p = 1
+    return p
+
 @ti.kernel
 def paint(t: ti.i32):
     for i in range(1, n-1):
@@ -29,19 +58,7 @@ def paint(t: ti.i32):
         b = cells[t-1, i] 
         c = cells[t-1, i+1] 
 
-
-        p = 0
-        if a == 1:
-            if b == 0 and c == 0:
-                p = 1
-            else:
-                p = 0
-        else:
-            if b == 0 and c == 0:
-                p = 0
-            else:
-                p = 1
-        cells[t, i] = p
+        cells[t, i] = rule_110(a, b, c)
 
 gui = ti.GUI("Automata", (img_n, img_n))
 
@@ -53,4 +70,4 @@ for i in range(1, n):
     gui.show()
 
 gui.set_image(pixels)
-gui.wait_key()
+# gui.wait_key()
