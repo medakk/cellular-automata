@@ -1,4 +1,4 @@
-import pygame
+from fb import Viewer
 import numpy as np
 import pycuda.driver as cuda
 import pycuda.autoinit
@@ -8,9 +8,6 @@ from PIL import Image
 
 N = 200
 display_size = (900, 900)
-
-pygame.init()
-display = pygame.display.set_mode(display_size)
 
 cell_state = np.zeros((N, N), dtype=np.int32)
 cell_state[0, N//2] = 1
@@ -40,18 +37,8 @@ def update():
         step = 1
 
     func(cuda.InOut(cell_state), np.int32(rule), np.int32(step), np.int32(N), block=(N, 1, 1))
-    return cell_state
+    image = np.array(Image.fromarray(cell_state * 255).resize(display_size, Image.NEAREST))
+    return image, f'Cellular Automate: Rule {rule}'
 
-
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    Z = np.array(Image.fromarray(update()*255).resize(display_size, Image.NEAREST))
-    surf = pygame.surfarray.make_surface(Z)
-    display.blit(surf, (0, 0))
-    pygame.display.set_caption(f'Cellular Autamata: Rule {rule}')
-    pygame.display.update()
-
-pygame.quit()
+viewer = Viewer(update, display_size)
+viewer.start()
