@@ -1,7 +1,6 @@
 import pygame
 
 class Viewer:
-
     def __init__(self, update_func, display_size):
         self.update_func = update_func
         pygame.init()
