@@ -38,7 +38,8 @@ def update():
 
     func(cuda.InOut(cell_state), np.int32(rule), np.int32(step), np.int32(N), block=(N, 1, 1))
     image = np.array(Image.fromarray(cell_state * 255).resize(display_size, Image.NEAREST))
-    return image, f'Cellular Automate: Rule {rule}'
+    viewer.set_title(f'Cellular Automate: Rule {rule}')
+    return image
 
 viewer = Viewer(update, display_size)
 viewer.start()
