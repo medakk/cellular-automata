@@ -65,8 +65,8 @@ def update():
         # set_to = np.int32(random.randrange(0, 2))
         set_to = np.int32(1)
         circle(cuda.InOut(A), x, y, r, set_to, np.int32(N), block=(N, 1, 1))
-    if random.random() < 0.05:
-        A *= np.random.random((N, N)) < 0.9
+    if random.random() < 0.001:
+        A *= np.random.random((N, N)) < 0.3
 
     image = np.array(Image.fromarray(A * 255).resize(display_size, Image.NEAREST))
     return image
