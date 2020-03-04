@@ -17,7 +17,7 @@ mod = SourceModule('''
     const int idx = threadIdx.x + 1;
     const int is_active = A[(step-1)*n + idx] & 0x80000000;
     if(is_active == 0) {
-      // DO SOMETHING
+      A[step*n + idx] = A[(step-1)*n + idx];
       return;
     }
 
@@ -51,7 +51,7 @@ def update():
     func(cuda.InOut(cell_state), np.int32(rule), np.int32(step), np.int32(N), block=(N-1, 1, 1))
     image = cell_state * rule
     image = np.array(Image.fromarray(image).resize(display_size, Image.NEAREST))
-    return image, f'Cellular Automate: Rule {rule}'
+    return image
 
 viewer = Viewer(update, display_size)
 viewer.start()
