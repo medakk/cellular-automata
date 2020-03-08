@@ -10,7 +10,7 @@ from PIL import Image
 
 from fb import Viewer
 
-N = 1024*2
+N = 128*2
 display_size = (1024, 1024)
 
 cell_state = np.zeros((N, N), dtype=np.float32)
@@ -21,6 +21,10 @@ mod = SourceModule('''
   }
   __global__ void cell_step(float *A, float rule, int step, int n) {
     const int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if(idx < 1 || idx >= n)
+      return;
+
     const float a = A[(step-1)*n + idx - 1];
     const float b = A[(step-1)*n + idx];
     const float c = A[(step-1)*n + idx + 1];
@@ -44,7 +48,7 @@ def update(steps=20):
           step = 1
       func(cuda.InOut(cell_state), np.float32(rule), np.int32(step), np.int32(N),
                 block=(1024, 1, 1),
-                grid=(N//1024, 1))
+                grid=(max(1, N//1024), 1))
 
 
     image = np.stack((cell_state*255.0,)*3, axis=-1).astype('uint8')
