@@ -38,14 +38,17 @@ func = mod.get_function('cell_step')
 step = 0
 rule = random.random()
 last_time = time.time()
-def update(steps=20):
+def update(steps=10):
     global step, rule, last_time
 
     for _ in range(steps):
       step += 1
-      if step == N:
+      if step >= N:
+          # viewer.save_frame(f'out/rule_{rule:0.2f}.png')
           rule = random.random()
           step = 1
+          break
+
       func(cuda.InOut(cell_state), np.float32(rule), np.int32(step), np.int32(N),
                 block=(1024, 1, 1),
                 grid=(max(1, N//1024), 1))

@@ -50,3 +50,6 @@ class Viewer:
             pygame.display.update()
 
         pygame.quit()
+    
+    def save_frame(self, fname):
+        pygame.image.save(self.display, fname)
