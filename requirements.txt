@@ -18,7 +18,7 @@ numpy==1.18.1
 packaging==20.1
 Pillow==7.0.0
 pluggy==0.13.1
-py==1.8.1
+py==1.10.0
 pybind11==2.4.3
 pycuda==2019.1.2
 pygame==1.9.6
